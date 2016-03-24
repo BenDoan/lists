@@ -20,7 +20,7 @@ DATA_DIR = "data"
 @get('/')
 def index():
     all_lists = get_all_list_names()
-    return template("templates/index.tpl", title="index", lists=all_lists)
+    return template("templates/index.tpl", title="index", lists=sorted(all_lists))
 
 
 @get('/l/<name:re:[a-z0-9-_]+>')
