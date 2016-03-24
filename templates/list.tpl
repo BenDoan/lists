@@ -1,5 +1,5 @@
 % rebase('templates/base.tpl', title=list_name)
-<h2><a class="homebutton" href="/">&#8962;</a> | {{list_name}}</h2>
+<h2 class="list-heading"><a class="homebutton" href="/">&#8962;</a> | <a href="/l/{{list_name}}">{{list_name}}</a></h2>
 
 <ul>
     % for index, item in enumerate(list_contents):
@@ -11,6 +11,6 @@
 </ul>
 
 <form action="/l/{{list_name}}/update" method="POST">
-    <input name="list_item" type="text"/>
-    <input type="submit" value="add"/>
+    <input class="listadd" autofocus name="list_item" type="text"/>
+    <input class="listsubmit" type="submit" value="add"/>
 </form>

@@ -9,6 +9,6 @@
 </ul>
 
 <form action="/s/add" method="POST">
-    <input name="list_name" type="text"/>
-    <input type="submit" value="add"/>
+    <input class="listadd" autofocus name="list_name" type="text"/>
+    <input class="listsubmit" type="submit" value="add"/>
 </form>
