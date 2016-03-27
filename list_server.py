@@ -5,18 +5,20 @@ import os
 from os import path
 
 from bottle import (
-        route,
-        run,
-        template,
-        request,
         abort,
         get,
         post,
-        redirect
+        redirect,
+        request,
+        route,
+        run,
+        static_file,
+        template,
     )
 
 DATA_DIR = "data"
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
+
 
 @get('/')
 def index():
@@ -130,5 +132,10 @@ def get_fileloc(name):
     return fileloc
 
 
+@route('/static/<path:path>')
+def callback(path):
+    return static_file(path, root="./static")
+
+
 if __name__ == '__main__':
-    run(host='localhost', port=8080)
+    run(host='0.0.0.0', port=8080)

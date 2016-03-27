@@ -1,9 +1,10 @@
 % rebase('templates/base.tpl', title=list_name)
 <h2 class="list-heading"><a class="homebutton" href="/">&#8962;</a> | <a href="/l/{{list_name}}">{{list_name}}</a></h2>
 
-<ul>
+<table class="table">
     % for index, item in enumerate(list_contents):
-        <li>
+        <tr style="cursor: pointer" onclick="document.location=this.getElementsByTagName('a').getAttribute('href');"><td>
+            <div class="row-inner">
              % if item['is_checked']:
                 <strike>
              % end
@@ -16,11 +17,12 @@
                 </strike>
              % end
             <a href="/l/{{list_name}}/delete/{{index}}">&times;</a>
-        </li>
+            </div>
+        </td></tr>
     % end
-</ul>
+</table>
 
 <form action="/l/{{list_name}}/update" method="POST">
-    <input class="listadd" autofocus name="list_item_text" type="text"/>
-    <input class="listsubmit" type="submit" value="add"/>
+    <input class="listadd col-xs-9 col-sm-9 col-md-9 col-lg-9" autofocus name="list_item_text" type="text"/>
+    <input class="listsubmit col-xs-2 col-sm-2 col-md-2 col-lg-2" type="submit" value="add"/>
 </form>
