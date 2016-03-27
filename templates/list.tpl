@@ -4,13 +4,23 @@
 <ul>
     % for index, item in enumerate(list_contents):
         <li>
-            {{item}}
+             % if item['is_checked']:
+                <strike>
+             % end
+
+            <a class="check-link" href="/l/{{list_name}}/check/{{index}}">
+                {{item['text']}}
+            </a>
+
+             % if item['is_checked']:
+                </strike>
+             % end
             <a href="/l/{{list_name}}/delete/{{index}}">&times;</a>
         </li>
     % end
 </ul>
 
 <form action="/l/{{list_name}}/update" method="POST">
-    <input class="listadd" autofocus name="list_item" type="text"/>
+    <input class="listadd" autofocus name="list_item_text" type="text"/>
     <input class="listsubmit" type="submit" value="add"/>
 </form>

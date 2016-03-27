@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 
@@ -15,7 +16,7 @@ from bottle import (
     )
 
 DATA_DIR = "data"
-
+DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 @get('/')
 def index():
@@ -35,9 +36,9 @@ def list_view(name):
 
 @post('/l/<name:re:[a-z0-9-_]+>/update')
 def list_update(name):
-    list_item = request.forms.get('list_item', None)
+    list_item_text = request.forms.get('list_item_text', None)
 
-    if list_item is None:
+    if list_item_text is None:
         abort(400, "List item not specified")
 
 
@@ -45,8 +46,14 @@ def list_update(name):
     if name not in all_lists:
         abort(404, "List not found")
 
+    new_item = {
+        "text": list_item_text,
+        "creation_date": datetime.datetime.now().isoformat(),
+        "is_checked": False
+    }
+
     list_contents = get_list(name)
-    list_contents.append(list_item)
+    list_contents.append(new_item)
 
     update_list(name, list_contents)
 
@@ -54,13 +61,28 @@ def list_update(name):
 
 
 @get('/l/<name:re:[a-z0-9-_]+>/delete/<index:int>')
-def list_delete(name, index):
+def list_item_delete(name, index):
     all_lists = get_all_list_names()
     if name not in all_lists:
         abort(404, "List not found")
 
     list_contents = get_list(name)
     del list_contents[index]
+
+    update_list(name, list_contents)
+
+    redirect("/l/" + name)
+
+
+@get('/l/<name:re:[a-z0-9-_]+>/check/<index:int>')
+def list_item_check(name, index):
+    all_lists = get_all_list_names()
+    if name not in all_lists:
+        abort(404, "List not found")
+
+    list_contents = get_list(name)
+
+    list_contents[index]['is_checked'] = not list_contents[index]['is_checked']
 
     update_list(name, list_contents)
 
@@ -89,7 +111,7 @@ def get_all_list_names():
 
 def update_list(name, list_contents):
     with open(get_fileloc(name), "w") as f:
-        json.dump(list_contents, f)
+        json.dump(list_contents, f, indent=4, sort_keys=True)
 
 
 def get_list(name):
