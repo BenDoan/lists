@@ -1,4 +1,5 @@
 {
     "username": "ben",
-    "password": "mypass"
+    "password": "mypass",
+    "port": 8080
 }
