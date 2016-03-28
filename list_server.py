@@ -6,6 +6,7 @@ from os import path
 
 from bottle import (
         abort,
+        auth_basic,
         get,
         post,
         redirect,
@@ -19,8 +20,16 @@ from bottle import (
 DATA_DIR = "data"
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
+with open("config.json") as f:
+    config = json.load(f)
+
+def check_auth(username, password):
+    return username == config['username'] and \
+            password == config['password']
+
 
 @get('/')
+@auth_basic(check_auth)
 def index():
     all_lists = get_all_list_names()
     return template("templates/index.tpl", title="index", lists=sorted(all_lists))
