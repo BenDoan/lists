@@ -102,7 +102,7 @@ def list_item_check(name, index):
 
 @post('/s/add')
 def list_add():
-    name = request.forms.get('list_name', None)
+    name = request.forms.get('list_name', None).lower()
 
     if name is None:
         abort(400, "List name not specified")
