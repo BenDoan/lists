@@ -3,7 +3,7 @@
 
 <table class="table">
     % for index, item in enumerate(list_contents):
-        <tr style="cursor: pointer" onclick="document.location=this.getElementsByTagName('a').getAttribute('href');"><td>
+        <tr><td>
             <div class="row-inner">
              % if item['is_checked']:
                 <strike>

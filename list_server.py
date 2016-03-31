@@ -36,6 +36,7 @@ def index():
 
 
 @get('/l/<name:re:[a-z0-9-_]+>')
+@auth_basic(check_auth)
 def list_view(name):
     all_lists = get_all_list_names()
     if name not in all_lists:
@@ -46,6 +47,7 @@ def list_view(name):
 
 
 @post('/l/<name:re:[a-z0-9-_]+>/update')
+@auth_basic(check_auth)
 def list_update(name):
     list_item_text = request.forms.get('list_item_text', None)
 
@@ -72,6 +74,7 @@ def list_update(name):
 
 
 @get('/l/<name:re:[a-z0-9-_]+>/delete/<index:int>')
+@auth_basic(check_auth)
 def list_item_delete(name, index):
     all_lists = get_all_list_names()
     if name not in all_lists:
@@ -86,6 +89,7 @@ def list_item_delete(name, index):
 
 
 @get('/l/<name:re:[a-z0-9-_]+>/check/<index:int>')
+@auth_basic(check_auth)
 def list_item_check(name, index):
     all_lists = get_all_list_names()
     if name not in all_lists:
@@ -101,6 +105,7 @@ def list_item_check(name, index):
 
 
 @post('/s/add')
+@auth_basic(check_auth)
 def list_add():
     name = request.forms.get('list_name', None).lower()
 
@@ -142,6 +147,7 @@ def get_fileloc(name):
 
 
 @route('/static/<path:path>')
+@auth_basic(check_auth)
 def callback(path):
     return static_file(path, root="./static")
 
