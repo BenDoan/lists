@@ -149,11 +149,27 @@ def get_fileloc(name):
     return fileloc
 
 
+def validate_list(name):
+    if re.match(r"[a-z0-9-_]+", name) is None:
+        abort(400, "Invalid list name")
+
+    all_lists = get_all_list_names()
+    if name not in all_lists:
+        abort(404, "List not found")
+
+
 @route('/static/<path:path>')
 @auth_basic(check_auth)
 def callback(path):
     return static_file(path, root="./static")
 
 
+@hook('before_request')
+def strip_path():
+    request.environ['PATH_INFO'] = request.environ['PATH_INFO'].rstrip('/')
+
+
 if __name__ == '__main__':
     run(host='0.0.0.0', port=config['port'])
+
+app = default_app()
