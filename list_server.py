@@ -1,13 +1,16 @@
 import datetime
 import json
 import os
+import re
 
 from os import path
 
 from bottle import (
         abort,
         auth_basic,
+        default_app,
         get,
+        hook,
         post,
         redirect,
         request,
@@ -38,9 +41,7 @@ def index():
 @get('/l/<name:re:[a-z0-9-_]+>')
 @auth_basic(check_auth)
 def list_view(name):
-    all_lists = get_all_list_names()
-    if name not in all_lists:
-        abort(404, "List not found")
+    validate_list(name)
 
     list_contents = get_list(name)
     return template("templates/list.tpl", list_name=name, list_contents=list_contents)
@@ -55,9 +56,7 @@ def list_update(name):
         abort(400, "List item not specified")
 
 
-    all_lists = get_all_list_names()
-    if name not in all_lists:
-        abort(404, "List not found")
+    validate_list(name)
 
     new_item = {
         "text": list_item_text,
@@ -76,9 +75,7 @@ def list_update(name):
 @get('/l/<name:re:[a-z0-9-_]+>/delete/<index:int>')
 @auth_basic(check_auth)
 def list_item_delete(name, index):
-    all_lists = get_all_list_names()
-    if name not in all_lists:
-        abort(404, "List not found")
+    validate_list(name)
 
     list_contents = get_list(name)
     del list_contents[index]
@@ -91,9 +88,7 @@ def list_item_delete(name, index):
 @get('/l/<name:re:[a-z0-9-_]+>/check/<index:int>')
 @auth_basic(check_auth)
 def list_item_check(name, index):
-    all_lists = get_all_list_names()
-    if name not in all_lists:
-        abort(404, "List not found")
+    validate_list(name)
 
     list_contents = get_list(name)
 
@@ -103,6 +98,14 @@ def list_item_check(name, index):
 
     redirect("/l/" + name)
 
+
+@get('/l/<name:re:[a-z0-9-_]+>/clearchecked')
+@auth_basic(check_auth)
+def list_clear_checked(name):
+    validate_list(name)
+
+    new_list = [x for x in get_list(name) if not x['is_checked']]
+    update_list(name, new_list)
 
 @post('/s/add')
 @auth_basic(check_auth)
