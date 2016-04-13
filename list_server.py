@@ -32,14 +32,12 @@ def check_auth(username, password):
 
 
 @get('/')
-@auth_basic(check_auth)
 def index():
     all_lists = get_all_list_names()
     return template("templates/index.tpl", title="index", lists=sorted(all_lists))
 
 
 @get('/l/<name:re:[a-z0-9-_]+>')
-@auth_basic(check_auth)
 def list_view(name):
     validate_list(name)
 
@@ -161,7 +159,6 @@ def validate_list(name):
 
 
 @route('/static/<path:path>')
-@auth_basic(check_auth)
 def static(path):
     return static_file(path, root="./static")
 
