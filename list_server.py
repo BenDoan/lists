@@ -107,6 +107,7 @@ def list_clear_checked(name):
 
     redirect("/l/" + name)
 
+
 @post('/s/add')
 @auth_basic(check_auth)
 def list_add():
@@ -122,6 +123,21 @@ def list_add():
     update_list(name, [])
 
     redirect("/l/" + name)
+
+
+@post('/s/delete')
+@auth_basic(check_auth)
+def list_delete():
+    name = request.forms.get('list_name', None).lower()
+    if name is None:
+        abort(400, "List name not specified")
+
+    all_lists = get_all_list_names()
+    if name not in all_lists:
+        abort(400, "List does not exists")
+
+    delete_list(name):
+    redirect("/")
 
 
 def get_all_list_names():
