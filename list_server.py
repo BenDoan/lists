@@ -1,3 +1,4 @@
+import argparse
 import datetime
 import json
 import os
@@ -20,11 +21,10 @@ from bottle import (
         template,
     )
 
-DATA_DIR = "data"
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
-with open("config.json") as f:
-    config = json.load(f)
+config = None
+
 
 def check_auth(username, password):
     return username == config['username'] and \
@@ -125,7 +125,7 @@ def list_add():
 
 
 def get_all_list_names():
-    return [x.split(".")[0] for x in os.listdir(DATA_DIR)]
+    return [x.split(".")[0] for x in os.listdir(config['data_path'])]
 
 
 def update_list(name, list_contents):
@@ -144,7 +144,7 @@ def delete_list(name):
 
 def get_fileloc(name):
     filename = name + ".json"
-    fileloc = path.join(DATA_DIR, filename)
+    fileloc = path.join(config['data_path'], filename)
 
     return fileloc
 
@@ -170,6 +170,15 @@ def strip_path():
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='starts a lists server')
+    parser.add_argument('--config', help='specifies the config file location (default: ./config.json)',
+                            default="./config.json")
+
+    args = parser.parse_args()
+
+    with open(args.config) as f:
+        config = json.load(f)
+
     run(host='0.0.0.0', port=config['port'])
 
 app = default_app()
