@@ -107,6 +107,8 @@ def list_clear_checked(name):
     new_list = [x for x in get_list(name) if not x['is_checked']]
     update_list(name, new_list)
 
+    redirect("/l/" + name)
+
 @post('/s/add')
 @auth_basic(check_auth)
 def list_add():
@@ -160,10 +162,11 @@ def validate_list(name):
 
 @route('/static/<path:path>')
 @auth_basic(check_auth)
-def callback(path):
+def static(path):
     return static_file(path, root="./static")
 
 
+# remove
 @hook('before_request')
 def strip_path():
     request.environ['PATH_INFO'] = request.environ['PATH_INFO'].rstrip('/')
