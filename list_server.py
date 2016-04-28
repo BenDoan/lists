@@ -136,7 +136,7 @@ def list_delete():
     if name not in all_lists:
         abort(400, "List does not exists")
 
-    delete_list(name):
+    delete_list(name)
     redirect("/")
 
 
