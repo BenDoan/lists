@@ -1,4 +1,4 @@
-% rebase('templates/base.tpl', title=list_name)
+% rebase('base.tpl', title=list_name)
 <div class="row">
     <h2 class="list-heading"><a class="homebutton" href="/">&#8962;</a> | <a href="/l/{{list_name}}">{{list_name}}</a></h2>
 

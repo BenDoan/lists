@@ -63,3 +63,4 @@ target/
 
 data
 config.json
+config-dev.json

@@ -1,4 +1,4 @@
-% rebase('templates/base.tpl', title=title)
+% rebase('base.tpl', title=title)
 <h2>Lists</h2>
 <table class="table">
     % for list_name in lists:

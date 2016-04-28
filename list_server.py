@@ -6,6 +6,7 @@ import re
 
 from os import path
 
+import bottle
 from bottle import (
         abort,
         auth_basic,
@@ -31,10 +32,12 @@ def check_auth(username, password):
             password == config['password']
 
 
+# list crud endpoints
 @get('/')
 def index():
     all_lists = get_all_list_names()
-    return template("templates/index.tpl", title="index", lists=sorted(all_lists))
+
+    return template("index.tpl", title="index", lists=sorted(all_lists))
 
 
 @get('/l/<name:re:[a-z0-9-_]+>')
@@ -42,7 +45,8 @@ def list_view(name):
     validate_list(name)
 
     list_contents = get_list(name)
-    return template("templates/list.tpl", list_name=name, list_contents=list_contents)
+
+    return template("list.tpl", list_name=name, list_contents=list_contents)
 
 
 @post('/l/<name:re:[a-z0-9-_]+>/update')
@@ -140,25 +144,26 @@ def list_delete():
     redirect("/")
 
 
+# list file operations
 def get_all_list_names():
     return [x.split(".")[0] for x in os.listdir(config['data_path'])]
 
 
 def update_list(name, list_contents):
-    with open(get_fileloc(name), "w") as f:
+    with open(get_list_file_loc(name), "w") as f:
         json.dump(list_contents, f, indent=4, sort_keys=True)
 
 
 def get_list(name):
-    with open(get_fileloc(name), "r") as f:
+    with open(get_list_file_loc(name), "r") as f:
         return json.load(f)
 
 
 def delete_list(name):
-    os.remove(get_fileloc(name))
+    os.remove(get_list_file_loc(name))
 
 
-def get_fileloc(name):
+def get_list_file_loc(name):
     filename = name + ".json"
     fileloc = path.join(config['data_path'], filename)
 
@@ -174,12 +179,17 @@ def validate_list(name):
         abort(404, "List not found")
 
 
+# misc
 @route('/static/<path:path>')
 def static(path):
-    return static_file(path, root="./static")
+    return static_file(path, root=get_script_rel_path("static"))
+
+def get_script_rel_path(filepath):
+    script_dir = os.path.dirname(os.path.realpath(__file__))
+    return path.join(script_dir, filepath)
 
 
-# remove
+# remove ending slash from requests
 @hook('before_request')
 def strip_path():
     request.environ['PATH_INFO'] = request.environ['PATH_INFO'].rstrip('/')
@@ -191,6 +201,10 @@ if __name__ == '__main__':
                             default="./config.json")
 
     args = parser.parse_args()
+
+    tpl_path = path.join(get_script_rel_path("templates"))
+    print("tpl path: ", tpl_path)
+    bottle.TEMPLATE_PATH.insert(0, tpl_path)
 
     with open(args.config) as f:
         config = json.load(f)
