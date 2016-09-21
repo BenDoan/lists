@@ -16,16 +16,18 @@ from bottle import (
         post,
         redirect,
         request,
+        response,
         route,
         run,
         static_file,
         template,
     )
 
+SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+
 DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 config = None
-
 
 def check_auth(username, password):
     return username == config['username'] and \
@@ -98,7 +100,8 @@ def list_item_check(name, index):
 
     update_list(name, list_contents)
 
-    redirect("/l/" + name)
+    response.status = 303
+    response.set_header('Location', "/l/" + name)
 
 
 @get('/l/<name:re:[a-z0-9-_]+>/clearchecked')
@@ -194,17 +197,19 @@ def get_script_rel_path(filepath):
 def strip_path():
     request.environ['PATH_INFO'] = request.environ['PATH_INFO'].rstrip('/')
 
+tpl_path = path.join(get_script_rel_path("templates"))
+bottle.TEMPLATE_PATH.insert(0, tpl_path)
+try:
+    with open(get_script_rel_path("config.json")) as f:
+        config = json.load(f)
+except:
+    pass
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='starts a lists server')
     parser.add_argument('--config', help='specifies the config file location (default: ./config.json)',
                             default="./config.json")
-
     args = parser.parse_args()
-
-    tpl_path = path.join(get_script_rel_path("templates"))
-    print("tpl path: ", tpl_path)
-    bottle.TEMPLATE_PATH.insert(0, tpl_path)
 
     with open(args.config) as f:
         config = json.load(f)
