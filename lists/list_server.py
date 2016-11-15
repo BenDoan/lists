@@ -6,8 +6,8 @@ import re
 
 from os import path
 
-import bottle
-from bottle import (
+import lib.bottle as bottle
+from lib.bottle import (
         abort,
         auth_basic,
         default_app,

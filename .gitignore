@@ -61,6 +61,5 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
-data
 config.json
 config-dev.json
